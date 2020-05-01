@@ -13,9 +13,7 @@ pipeline {
     }
     stages {
         stage("Tests") {
-            steps {
-                tests("order-service")
-            }
+            tests("order-service")
         }
         stage("check branch and push to Docker hub repository") {
             when {
