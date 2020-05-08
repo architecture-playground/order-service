@@ -1,4 +1,5 @@
 #!groovy
+@Library('jenkins-libraries')_
 
 properties([disableConcurrentBuilds()])
 
@@ -12,13 +13,24 @@ pipeline {
         timestamps()
     }
     stages {
-        stage("Tests") {
-            tests("order-service")
-        }
-        stage("check branch and push to Docker hub repository") {
+        stage("Validate Commits") {
             when {
                 expression {
-                    print(env.BRANCH_NAME)
+                    return env.BRANCH_NAME != 'master';
+                }
+            }
+            steps {
+                validateCommits()
+            }
+        }
+        stage("Tests") {
+            steps {
+                tests("order-service")
+            }
+        }
+        stage("Push to Docker Hub") {
+            when {
+                expression {
                     return env.BRANCH_NAME == 'master';
                 }
             }
